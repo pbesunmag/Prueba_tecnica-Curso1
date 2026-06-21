@@ -1,3 +1,6 @@
+import modelo.Cliente;
+import repositorio.GestionClientes;
+
 import java.util.Scanner;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -11,13 +14,14 @@ public class Main {
 
         do {
             System.out.println("\n--- MENÚ GESTIÓN DE CLIENTES ---");
+            System.out.print("Selecciona una opción: ");
+            System.out.println();
             System.out.println("1. Agregar nuevo cliente");
             System.out.println("2. Listar todos los clientes");
             System.out.println("3. Actualizar información de un cliente");
             System.out.println("4. Eliminar un cliente");
             System.out.println("5. Buscar cliente por ciudad");
             System.out.println("6. Salir");
-            System.out.print("Selecciona una opción: ");
 
             opcion = teclado.nextInt();
             teclado.nextLine();
