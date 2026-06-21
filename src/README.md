@@ -29,6 +29,3 @@ El código está organizado en tres clases principales para garantizar la separa
 * 📄 `Main.java`: La interfaz de usuario. Controla el bucle del menú interactivo, la lectura del teclado con `Scanner` y el formateo de las pantallas.
 
 ---
-3. Dirígete al archivo `Main.java`.
-4. Ejecuta el método `main` haciendo clic en el botón **Play / Run**.
-5. Sigue las instrucciones interactivas que aparecerán en la consola.
