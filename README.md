@@ -1,4 +1,4 @@
-# Prueba_tecnica-Curso1
+# Prueba_tecnica_Curso1
 
 # 👥 Sistema de Gestión de Clientes (CRUD)
 
