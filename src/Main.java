@@ -7,13 +7,17 @@ import java.time.format.DateTimeFormatter;
 
 public class Main {
     public static void main(String[] args) {
+        GestionClientes gestor = new GestionClientes();
+
         Scanner teclado = new Scanner(System.in);
         // Creamos el formateador para usar el formato día-mes-año en todo el codigo
         DateTimeFormatter formateador = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         int opcion;
 
         do {
-            System.out.println("\n--- MENÚ GESTIÓN DE CLIENTES ---");
+            System.out.println("Bienvenido al sistema de gestión de clientes de Bastida's S.A.");
+            System.out.println();
+            System.out.println("\n----- MENÚ PRINCIPAL -----");
             System.out.print("Selecciona una opción: ");
             System.out.println();
             System.out.println("1. Agregar nuevo cliente");
@@ -29,13 +33,13 @@ public class Main {
             switch (opcion) {
                 case 1:
                     System.out.println("\n--- REGISTRAR NUEVO CLIENTE ---");
-                    System.out.print("Nombre: ");
+                    System.out.print("Indique el Nombre: ");
                     String nombre = teclado.nextLine();
 
-                    System.out.print("Apellido: ");
+                    System.out.print("Indique el Apellido: ");
                     String apellido = teclado.nextLine();
 
-                    System.out.print("Ciudad: ");
+                    System.out.print("Indique la Ciudad: ");
                     String ciudad = teclado.nextLine();
 
                     System.out.print("Fecha de nacimiento (DD-MM-AAAA): ");
@@ -43,7 +47,7 @@ public class Main {
                     // Parseamos la fecha con el formateador
                     LocalDate nacimiento = LocalDate.parse(fechaTexto, formateador);
 
-                    System.out.print("Teléfono: ");
+                    System.out.print("Teléfono móvil: ");
                     String telefono = teclado.nextLine();
 
                     System.out.print("Email: ");
@@ -94,8 +98,7 @@ public class Main {
                         }
 
                         // Enviamos los datos finales
-                        GestionClientes.actualizarCliente(idModificar, nuevoNombre, nuevoApellido,
-                                nuevaCiudad, nuevoTelefono, nuevoEmail, nuevaFecha);
+                        gestor.actualizarCliente(idModificar, nuevoNombre, nuevoApellido, nuevaCiudad, nuevoTelefono, nuevoEmail, nuevaFecha);
                     } else {
                         System.out.println("Error: No se encontró ningún cliente con el ID " + idModificar);
                     }
@@ -105,13 +108,13 @@ public class Main {
                     System.out.print("\nIntroduce el ID del cliente a eliminar: ");
                     int idEliminar = teclado.nextInt();
                     teclado.nextLine();
-                    GestionClientes.eliminarCliente(idEliminar);
+                    gestor.eliminarCliente(idEliminar);
                     break;
 
                 case 5:
                     System.out.print("\nIntroduce la ciudad a buscar: ");
                     String ciudadBuscar = teclado.nextLine();
-                    GestionClientes.buscarPorCiudad(ciudadBuscar);
+                    gestor.buscarPorCiudad(ciudadBuscar);
                     break;
 
                 case 6:
