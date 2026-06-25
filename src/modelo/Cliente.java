@@ -10,10 +10,11 @@ public class Cliente {
     private LocalDate nacimiento;
     private String telefono;
     private String email;
+    private String profesion;
 
     private static int contadorID = 1;
 
-    public Cliente(String nombre, String apellido, String ciudad, LocalDate nacimiento, String telefono, String email) {
+    public Cliente(String nombre, String apellido, String ciudad, LocalDate nacimiento, String telefono, String email, String profesion) {
         this.id = contadorID;
         contadorID++;
         this.nombre = nombre;
@@ -22,6 +23,7 @@ public class Cliente {
         this.nacimiento = nacimiento;
         this.telefono = telefono;
         this.email = email;
+        this.profesion = profesion;
     }
 
     public int getId() {
@@ -63,4 +65,11 @@ public class Cliente {
     public void setEmail(String email) {
         this.email = email;
     }
+    public String getProfesion() {
+        return profesion;
+    }
+    public void setProfesion(String profesion) {
+        this.profesion = profesion;
+    }
+
 }

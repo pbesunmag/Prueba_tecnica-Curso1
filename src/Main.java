@@ -1,34 +1,42 @@
 import modelo.Cliente;
 import repositorio.GestionClientes;
 
+import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.InputMismatchException;
 
 public class Main {
     public static void main(String[] args) {
+        // Instanciamos el objeto gestor correctamente
         GestionClientes gestor = new GestionClientes();
 
         Scanner teclado = new Scanner(System.in);
-        // Creamos el formateador para usar el formato día-mes-año en todo el codigo
+        // Creamos el formateador para usar el formato día-mes-año en todo el código
         DateTimeFormatter formateador = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         int opcion;
 
         do {
-            System.out.println("Bienvenido al sistema de gestión de clientes de Bastida's S.A.");
-            System.out.println();
-            System.out.println("\n----- MENÚ PRINCIPAL -----");
-            System.out.print("Selecciona una opción: ");
-            System.out.println();
+            System.out.println("\nBienvenido al sistema de gestión de clientes de Bastida's S.A.");
+            System.out.println("----- MENÚ PRINCIPAL -----");
             System.out.println("1. Agregar nuevo cliente");
             System.out.println("2. Listar todos los clientes");
             System.out.println("3. Actualizar información de un cliente");
             System.out.println("4. Eliminar un cliente");
             System.out.println("5. Buscar cliente por ciudad");
-            System.out.println("6. Salir");
+            System.out.println("6. Buscar cliente por año");
+            System.out.println("7. Salir");
+            System.out.print("Selecciona una opción: ");
 
-            opcion = teclado.nextInt();
-            teclado.nextLine();
+            try {
+                opcion = teclado.nextInt();
+                teclado.nextLine();
+            } catch (InputMismatchException e) {
+                System.out.println("❌ Error: Debes introducir un número entero del 1 al 7.");
+                teclado.nextLine();
+                opcion = 0; // Asignamos un valor neutro para que el menú vuelva a empezar sin romperse
+            }
 
             switch (opcion) {
                 case 1:
@@ -42,10 +50,20 @@ public class Main {
                     System.out.print("Indique la Ciudad: ");
                     String ciudad = teclado.nextLine();
 
-                    System.out.print("Fecha de nacimiento (DD-MM-AAAA): ");
-                    String fechaTexto = teclado.nextLine();
-                    // Parseamos la fecha con el formateador
-                    LocalDate nacimiento = LocalDate.parse(fechaTexto, formateador);
+                    LocalDate fechaNacimiento = null;
+                    boolean fechaValida = false;
+
+                    // Bucle robusto con try-catch para la fecha
+                    while (!fechaValida) {
+                        try {
+                            System.out.print("Fecha de nacimiento (DD-MM-AAAA): ");
+                            String fechaTexto = teclado.nextLine();
+                            fechaNacimiento = LocalDate.parse(fechaTexto, formateador);
+                            fechaValida = true;
+                        } catch (DateTimeParseException e) {
+                            System.out.println("❌ Error: El formato de fecha no es válido. Debe ser DD-MM-AAAA (Ejemplo: 29-08-1995).");
+                        }
+                    }
 
                     System.out.print("Teléfono móvil: ");
                     String telefono = teclado.nextLine();
@@ -53,12 +71,15 @@ public class Main {
                     System.out.print("Email: ");
                     String email = teclado.nextLine();
 
-                    Cliente nuevo = new Cliente(nombre, apellido, ciudad, nacimiento, telefono, email);
-                    GestionClientes.agregarCliente(nuevo);
+                    System.out.print("Profesión: ");
+                    String profesion = teclado.nextLine();
+
+                    Cliente nuevo = new Cliente (nombre, apellido, ciudad, fechaNacimiento, telefono, email, profesion);
+                    gestor.agregarCliente(nuevo);
                     break;
 
                 case 2:
-                    GestionClientes.listarClientes();
+                    gestor.listarClientes();
                     break;
 
                 case 3:
@@ -67,8 +88,9 @@ public class Main {
                     int idModificar = teclado.nextInt();
                     teclado.nextLine();
 
-                    if (GestionClientes.getMapaClientes().containsKey(idModificar)) {
-                        Cliente actual = GestionClientes.getMapaClientes().get(idModificar);
+
+                    if (gestor.getMapaClientes().containsKey(idModificar)) {
+                        Cliente actual = gestor.getMapaClientes().get(idModificar);
 
                         System.out.print("Nuevo Nombre (" + actual.getNombre() + "): ");
                         String nuevoNombre = teclado.nextLine();
@@ -90,15 +112,30 @@ public class Main {
                         String nuevoEmail = teclado.nextLine();
                         if (nuevoEmail.isEmpty()) nuevoEmail = actual.getEmail();
 
-                        System.out.print("Nueva Fecha (" + actual.getNacimiento().format(formateador) + "): ");
-                        String nuevaFecha = teclado.nextLine();
-                        if (nuevaFecha.isEmpty()) {
-                            // Si le da a ENTER, pasamos su fecha actual formateada como texto
-                            nuevaFecha = actual.getNacimiento().format(formateador);
+                        String nuevaFecha = "";
+                        boolean nuevaFechaValida = false;
+
+                        while (!nuevaFechaValida) {
+                            try {
+                                System.out.print("Nueva Fecha de nacimiento (" + actual.getNacimiento().format(formateador) + "): ");
+                                nuevaFecha = teclado.nextLine();
+
+                                if (nuevaFecha.isEmpty()) {
+                                    nuevaFecha = actual.getNacimiento().format(formateador);
+                                } else {
+                                    LocalDate.parse(nuevaFecha, formateador); // Validamos que sea correcta
+                                }
+                                nuevaFechaValida = true;
+                            } catch (DateTimeParseException e) {
+                                System.out.println("❌ Error: El formato de fecha no es válido. Debe ser DD-MM-AAAA.");
+                            }
                         }
 
-                        // Enviamos los datos finales
-                        gestor.actualizarCliente(idModificar, nuevoNombre, nuevoApellido, nuevaCiudad, nuevoTelefono, nuevoEmail, nuevaFecha);
+                        System.out.print("Nueva Profesión (" + actual.getProfesion() + "): ");
+                        String nuevaProfesion = teclado.nextLine();
+                        if (nuevaProfesion.isEmpty()) nuevaProfesion = actual.getProfesion();
+
+                        gestor.actualizarCliente(idModificar, nuevoNombre, nuevoApellido, nuevaCiudad, nuevoTelefono, nuevoEmail, nuevaFecha, nuevaProfesion);
                     } else {
                         System.out.println("Error: No se encontró ningún cliente con el ID " + idModificar);
                     }
@@ -115,15 +152,24 @@ public class Main {
                     System.out.print("\nIntroduce la ciudad a buscar: ");
                     String ciudadBuscar = teclado.nextLine();
                     gestor.buscarPorCiudad(ciudadBuscar);
+                    gestor.mostrarEstadisticasCiudades();
                     break;
 
                 case 6:
+                    System.out.print("\nIntroduce año a buscar: ");
+                    int agnoBuscar = teclado.nextInt();
+                    teclado.nextLine();
+                    gestor.buscarPorAgno(agnoBuscar);
+                    break;
+
+                case 7:
                     System.out.println("Cerrando el sistema.");
                     break;
+
                 default:
-                    System.out.println("Opción incorrecta. Introduce un número del 1 al 6.");
+                    System.out.println("Opción incorrecta. Selecciona un número del 1 al 7.");
             }
 
-        } while (opcion != 6);
+        } while (opcion != 7);
     }
 }
